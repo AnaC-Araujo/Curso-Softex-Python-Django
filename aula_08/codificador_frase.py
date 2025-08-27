@@ -1,0 +1,5 @@
+frase = input("Digite uma palavra ou frase: ")
+frase_codificada = frase.replace("a", "1").replace("e","2").replace("i", "3").replace("o","4").replace("u","5")
+print(f"Sua frase codificada: {frase_codificada}")
+frase_decodificada = frase.replace("1", "a").replace("2","e").replace("3", "i").replace("4","o").replace("5","u")
+print(f"Sua frase decodificada: {frase_decodificada}")
