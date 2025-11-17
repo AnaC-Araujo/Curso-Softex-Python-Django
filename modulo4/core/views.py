@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Tarefa
 from .models import Execucao
@@ -32,3 +32,16 @@ def home(request):
 
 def dona(request):
     return HttpResponse("<h1>Olá, Ana! Tudo bem?!</h1>")
+
+def concluir_tarefa(request, pk):
+    tarefa = get_object_or_404(Tarefa, pk=pk)
+    if request.method == 'POST':
+        tarefa.concluida = True
+        tarefa.save() 
+    return redirect('home')
+
+def deletar_tarefa(request, pk):
+    tarefa = get_object_or_404(Tarefa, pk=pk)
+    if request.method == 'POST':
+        tarefa.delete()
+    return redirect('home')
