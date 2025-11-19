@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from .models import Tarefa
 from .models import Execucao
 from .forms import TarefaForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 # Create your views here.
 def home(request):
@@ -45,3 +47,16 @@ def deletar_tarefa(request, pk):
     if request.method == 'POST':
         tarefa.delete()
     return redirect('home')
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save() 
+            login(request, user) 
+            return redirect('home') 
+    else:
+        form = UserCreationForm() 
+        
+    context = {'form': form}
+    return render(request, 'register.html', context)
