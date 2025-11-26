@@ -12,14 +12,14 @@ from django.contrib.auth.decorators import login_required
 def home(request):
    
     if request.method == 'POST':
-        form = TarefaForm(request.POST)
+        form = TarefaForm(request.POST, user=request.user)
         if form.is_valid():
                 tarefa = form.save(commit=False)
                 tarefa.user = request.user
                 tarefa.save()
                 return redirect('home')
     else:
-        form = TarefaForm() 
+       form = TarefaForm(user=request.user) 
 
     # return HttpResponse("<h1>Olá, Mundo! Esta é minha primeira página Django!</h1>")
     todas_as_tarefas = Tarefa.objects.filter(user=request.user).order_by('-criada_em')
