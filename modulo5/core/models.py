@@ -37,6 +37,7 @@ class Tarefa(models.Model):
         default='media'
     )
 
+    prazo = models.DateField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'Tarefa'
