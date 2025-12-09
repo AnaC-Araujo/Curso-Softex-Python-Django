@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Tarefa
+from datetime import date
 
 class TarefaSerializer(serializers.ModelSerializer):
     titulo = serializers.CharField(
@@ -12,10 +13,26 @@ class TarefaSerializer(serializers.ModelSerializer):
         )
     class Meta:
         model = Tarefa
-        fields = ['id', 'user', 'titulo', 'prioridade', 'descricao', 'concluida', 'criada_em']
+        fields = ['id', 'user', 'titulo', 'prioridade', 'descricao', 'prazo', 'concluida', 'criada_em']
         read_only_fields = ['id', 'criada_em']
-        
-        
+
+    def validate(self, data):
+        '''Implemente validação customizada:
+        • O prazo não pode ser no passado
+        • Se concluida=True, prazo não é obrigatório
+        • Se concluida=False, prazo é obrigatório '''
+        prazo = data.get('prazo')
+        concluida = data.get('concluida', False)
+        if prazo and prazo < date.today():
+            raise serializers.ValidationError(
+                "O prazo não pode ter data retroativa."
+            )
+        if concluida is False and prazo is None:
+            raise serializers.ValidationError(
+                "Tarefa não conluída o prazo é obrigatório!"
+            )
+        return data
+    
     def validate_titulo(self, value):
         """
         Validação customizada para o campo 'titulo'.
