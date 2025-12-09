@@ -26,6 +26,18 @@ class Tarefa(models.Model):
     
     descricao = models.TextField(blank=True, null=True)
 
+    PRIORIDADE_CHOICES = [
+        ('baixa', 'Baixa'),
+        ('media', 'Média'),
+        ('alta', 'Alta'),
+    ]
+    prioridade = models.CharField(
+        max_length=10,
+        choices=PRIORIDADE_CHOICES,
+        default='media'
+    )
+
+
     class Meta:
         verbose_name = 'Tarefa'
         verbose_name_plural = 'Tarefas'
