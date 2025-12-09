@@ -58,3 +58,18 @@ class ContagemTarefasAPIView(APIView):
         'concluidas': concluidas,
         'pendentes': pendentes
 })
+
+class EstatisticasTarefasAPIView(APIView):
+    def get(self, request):
+        total = Tarefa.objects.count()
+        concluidas = Tarefa.objects.filter(concluida=True).count()
+        pendentes = Tarefa.objects.filter(concluida=False).count()
+        
+        taxa_conclusao = concluidas / total if total > 0 else 0
+        
+        return Response({
+        'total': total,
+        'concluidas': concluidas,
+        'pendentes': pendentes,
+        'taxa_conclusao': round(taxa_conclusao, 2)
+        })
