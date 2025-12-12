@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Tarefa
 from datetime import date
+from django.utils import timezone
 
 class TarefaSerializer(serializers.ModelSerializer):
     titulo = serializers.CharField(
@@ -13,7 +14,7 @@ class TarefaSerializer(serializers.ModelSerializer):
         )
     class Meta:
         model = Tarefa
-        fields = ['id', 'user', 'titulo', 'prioridade', 'descricao', 'prazo', 'concluida', 'criada_em']
+        fields = ['id', 'user', 'titulo', 'prioridade', 'descricao', 'prazo', 'concluida', 'data_conclusao' ,'criada_em']
         read_only_fields = ['id', 'criada_em']
 
     def validate(self, data):
@@ -56,3 +57,15 @@ class TarefaSerializer(serializers.ModelSerializer):
             )
             
         return value
+    
+    def update(self, instance, validated_data):
+        concluida_atual = instance.concluida
+        concluida_nova = validated_data.get("concluida", concluida_atual)
+
+        if not concluida_atual and concluida_nova is True:
+            instance.data_conclusao = timezone.now()
+
+        if concluida_atual and concluida_nova is False:
+            instance.data_conclusao = None
+
+        return super().update(instance, validated_data)
