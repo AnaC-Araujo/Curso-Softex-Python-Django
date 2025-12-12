@@ -48,6 +48,9 @@ class ListaTarefasAPIView(APIView):
                 {'error': 'Erro interno do servidor.'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+    
+
+        
 
 class DetalheTarefaAPIView(APIView):
     def get_object(self, pk):
@@ -79,6 +82,18 @@ class DetalheTarefaAPIView(APIView):
         tarefa.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+    def post(self, request, pk, formt=None):
+        tarefa_original = self.get_object(pk)
+        data = TarefaSerializer(tarefa_original).data
+        data.pop("id", None)
+        data["concluida"] = False
+
+        serializer = TarefaSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     
            
 class ContagemTarefasAPIView(APIView):
@@ -106,3 +121,21 @@ class EstatisticasTarefasAPIView(APIView):
         'pendentes': pendentes,
         'taxa_conclusao': round(taxa_conclusao, 2)
         })
+    
+class ConcluirTarefaLoteAPIView(APIView):
+    def patch(self, request, format=None):
+        ids = request.data.get("ids", [])
+
+        if not isinstance(ids, list) or len(ids) == 0:
+            return Response({"error": "Envie uma lista de IDs"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        atualizadas = Tarefa.objects.filter(id_in=ids).update(concluida=True)
+
+        return Response(
+            {
+                "mensagem": "Tarefas atualizadas com sucesso!",
+                "quantidade": atualizadas,
+                "ids": ids
+            },
+            status=status.HTTP_200_OK
+        )
