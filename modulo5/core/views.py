@@ -8,11 +8,15 @@ import logging
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import generics
+from rest_framework.permissions import AllowAny 
+from .serializers import UserRegistrationSerializer
+from django.contrib.auth.models import User
+from .permissions import IsGerent
 
 logger = logging.getLogger(__name__)
 
-class ListaTarefasAPIView(APIView):
-    
+'''class ListaTarefasAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, format=None):
@@ -52,9 +56,7 @@ class ListaTarefasAPIView(APIView):
             return Response(
                 {'error': 'Erro interno do servidor.'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-    
-
+            )'''
         
 
 class DetalheTarefaAPIView(APIView):
@@ -220,3 +222,32 @@ class UserStatsView(APIView):
             'pendentes': pendentes,
             'taxa_conclusao': round(taxa_conclusao, 2)
         })
+    
+class TarefaListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = TarefaSerializer
+    permission_classes = [IsAuthenticated] 
+    
+    def get_queryset(self):
+        user = self.request.user
+        return Tarefa.objects.filter(user=user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class TarefaRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TarefaSerializer
+    
+    def get_queryset(self):
+        user = self.request.user
+        return Tarefa.objects.filter(user=user)
+    
+    def get_permissions(self):
+        if self.request.method == 'DELETE':
+            return [IsAuthenticated(), IsGerent()]
+    
+        return [IsAuthenticated()]
+    
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [AllowAny] 
+    serializer_class = UserRegistrationSerializer
