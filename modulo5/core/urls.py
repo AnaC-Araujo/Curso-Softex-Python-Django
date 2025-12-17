@@ -8,6 +8,7 @@ from .views import MinhaView
 from .views import LogoutView
 from .views import MeView
 from .views import ChangePasswordView
+from .views import UserStatsView
 
 app_name = 'core'
 urlpatterns = [
@@ -22,4 +23,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('me/', MeView.as_view(), name='usuario-autenticado'),
     path('change-password/', ChangePasswordView.as_view(), name='alterar-senha'),
+    path('stats/', UserStatsView.as_view(), name='estatisticas-usuario')
 ]

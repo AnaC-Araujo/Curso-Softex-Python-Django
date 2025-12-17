@@ -202,3 +202,21 @@ class ChangePasswordView(APIView):
         user.set_password(new_password)
         user.save()
         return Response({'detail': 'Senha alterada com sucesso'})
+    
+class UserStatsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+        user=request.user
+        total = Tarefa.objects.filter(user=user).count()
+        concluidas = Tarefa.objects.filter(user=user, concluida=True).count()
+        pendentes = total - concluidas
+        
+        taxa_conclusao = concluidas / total if total > 0 else 0
+
+        return Response({
+            'total_tarefas': total,
+            'concluidas': concluidas,
+            'pendentes': pendentes,
+            'taxa_conclusao': round(taxa_conclusao, 2)
+        })
