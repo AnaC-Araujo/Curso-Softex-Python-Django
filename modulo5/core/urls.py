@@ -6,6 +6,7 @@ from .views import DetalheTarefaAPIView
 from .views import ConcluirTarefaLoteAPIView
 from .views import MinhaView
 from .views import LogoutView
+from .views import MeView
 
 app_name = 'core'
 urlpatterns = [
@@ -18,4 +19,5 @@ urlpatterns = [
     path('tarefas/concluir-todas/', ConcluirTarefaLoteAPIView.as_view()),
     path('teste/', MinhaView.as_view(), name= 'teste-autenticacao'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('me/', MeView.as_view(), name='usuario-autenticado'),
 ]
