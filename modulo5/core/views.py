@@ -181,3 +181,24 @@ class MeView(APIView):
             'date_joined': user.date_joined
         })
       
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        if not old_password or not new_password:
+            return Response(
+                {'error': 'Informe a senha atual e a nova senha'},
+                status=400
+            )
+
+        if not user.check_password(old_password):
+            return Response(
+                {'error': 'Senha atual incorreta'},
+                status=400
+            )
+        user.set_password(new_password)
+        user.save()
+        return Response({'detail': 'Senha alterada com sucesso'})

@@ -7,6 +7,7 @@ from .views import ConcluirTarefaLoteAPIView
 from .views import MinhaView
 from .views import LogoutView
 from .views import MeView
+from .views import ChangePasswordView
 
 app_name = 'core'
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path('teste/', MinhaView.as_view(), name= 'teste-autenticacao'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('me/', MeView.as_view(), name='usuario-autenticado'),
+    path('change-password/', ChangePasswordView.as_view(), name='alterar-senha'),
 ]
