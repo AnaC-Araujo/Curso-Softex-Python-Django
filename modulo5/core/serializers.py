@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Tarefa
 from datetime import date
 from django.utils import timezone
+from django.contrib.auth.models import User, Group
 
 class TarefaSerializer(serializers.ModelSerializer):
     titulo = serializers.CharField(
@@ -71,3 +72,31 @@ class TarefaSerializer(serializers.ModelSerializer):
             instance.data_conclusao = None
 
         return super().update(instance, validated_data)
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password'}
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        email = validated_data.get('email', '')
+        username = validated_data['username']
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+    
+        try:
+            grupo_comum = Group.objects.get(name='Comum')
+            user.groups.add(grupo_comum)
+        except Group.DoesNotExist:
+            pass
+        return user
