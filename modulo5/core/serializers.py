@@ -100,3 +100,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         except Group.DoesNotExist:
             pass
         return user
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        read_only_fields = ['email']
