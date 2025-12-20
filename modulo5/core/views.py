@@ -13,6 +13,8 @@ from rest_framework.permissions import AllowAny
 from .serializers import UserRegistrationSerializer
 from django.contrib.auth.models import User
 from .permissions import IsGerent
+from.serializers import UserUpdateSerializer
+from .serializers import UserProfileSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -229,6 +231,8 @@ class TarefaListCreateAPIView(generics.ListCreateAPIView):
     
     def get_queryset(self):
         user = self.request.user
+        if user.is_staff:
+            return Tarefa.objects.all()
         return Tarefa.objects.filter(user=user)
     
     def perform_create(self, serializer):
@@ -239,6 +243,8 @@ class TarefaRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     
     def get_queryset(self):
         user = self.request.user
+        if user.is_staff:
+            return Tarefa.objects.all()
         return Tarefa.objects.filter(user=user)
     
     def get_permissions(self):
@@ -251,3 +257,16 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = [AllowAny] 
     serializer_class = UserRegistrationSerializer
+
+class UserUpdateView(generics.UpdateAPIView):
+    serializer_class = UserUpdateSerializer
+    permission_classes = [IsAuthenticated]
+    def get_object(self):
+        return self.request.user
+
+class MeProfileView(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
