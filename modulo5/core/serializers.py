@@ -106,3 +106,12 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email']
         read_only_fields = ['email']
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    cargo = serializers.StringRelatedField(
+        many=True,
+        source='groups'
+    )
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'cargo']
