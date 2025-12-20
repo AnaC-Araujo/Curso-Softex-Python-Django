@@ -11,6 +11,8 @@ from .views import ChangePasswordView
 from .views import UserStatsView
 from .views import TarefaRetrieveUpdateDestroyAPIView
 from .views import RegisterView
+from .views import MeProfileView
+from .views import UserUpdateView
 
 app_name = 'core'
 urlpatterns = [
@@ -26,4 +28,6 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='alterar-senha'),
     path('stats/', UserStatsView.as_view(), name='estatisticas-usuario'),
     path('register/', RegisterView.as_view(), name='register'),
+    path('user/', UserUpdateView.as_view(), name='user-update'),
+    path('me2/', MeProfileView.as_view(), name='meus-dados'),
 ]
